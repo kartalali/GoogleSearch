@@ -21,10 +21,12 @@ import java.util.concurrent.TimeUnit;
 public class CommonMethods extends PageInitializer {
 
     public static WebDriver driver;
+    public static String searchKeyword;
 
 
-    public static void openBrowserAndLaunchApplication() {
+    public static void openBrowser() {
         ConfigReader.readProperties(Constants.CONFIGURATION_FILEPATH);
+        searchKeyword = ConfigReader.getPropertyValue("keyword");
         switch (ConfigReader.getPropertyValue("browser")) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
@@ -37,8 +39,12 @@ public class CommonMethods extends PageInitializer {
             default:
                 throw new RuntimeException("Invalid browser name");
         }
-        driver.get(ConfigReader.getPropertyValue("url"));
         driver.manage().window().maximize();
+        driver.manage().deleteAllCookies();
+    }
+
+    public void launchUrl(String url) {
+        driver.get(url);
         driver.manage().timeouts().implicitlyWait(Constants.IMPLICIT_WAIT, TimeUnit.SECONDS);
         initializePageObjects();
     }
@@ -81,8 +87,7 @@ public class CommonMethods extends PageInitializer {
         byte[] picBytes = screen.getScreenshotAs(OutputType.BYTES);
         File sourceFile = screen.getScreenshotAs(OutputType.FILE);
         try {
-            FileUtils.copyFile(sourceFile, new File(Constants.SCREENSHOT_FILEPATH + filename + " " +
-                    getTimeStamp("yyyy-MM-dd-HH-mm-ss") + ".png"));
+            FileUtils.copyFile(sourceFile, new File(Constants.SCREENSHOT_FILEPATH + filename + " " + getTimeStamp("yyyy-MM-dd-HH-mm-ss") + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,11 +99,6 @@ public class CommonMethods extends PageInitializer {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date);
     }
-    public void clearBrowserCache() throws InterruptedException {
-        driver.manage().deleteAllCookies();
-        Thread.sleep(3000);
-    }
-
     public static void closeBrowser() {
 
         driver.quit();

@@ -1,14 +1,14 @@
 package steps;
 
-import pages.GooglePage;
+import pages.AskSearchPage;
 import pages.GoogleSearchPage;
 
 public class PageInitializer {
-    public static GooglePage googlePage;
+    public static AskSearchPage askSearchPage;
     public static GoogleSearchPage googleSearchPage;
     public static void initializePageObjects() {
 
-        googlePage = new GooglePage();
+        askSearchPage = new AskSearchPage();
         googleSearchPage = new GoogleSearchPage();
     }
 }
